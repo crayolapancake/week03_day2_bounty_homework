@@ -8,10 +8,10 @@ class Bounty
 
   def initialize(options)
       @name = options['name']
-      @bounty_value = options['value']  .to_i
+      @bounty_value = options['value']  
       @last_known_location = options['location']
-      @weapon = options['options']
-      @id = options['id'].to_i if options['id']
+      @weapon = options['weapons']
+      @id = options['id']
   end
 
   def save
@@ -22,34 +22,34 @@ class Bounty
       (name, value, location, weapon)
       VALUES
         ($1,$2,$3,$4)
-      RETURNING id"
+      RETURNING *"
 
     values = [@name, @value, @location, @weapon]
 
     db.prepare("save_it", sql)
-    @id = db.exec_prepared("save_it", values)
+    db.exec_prepared("save_it", values)
     db.close()
   end
 
 
-  def Bounty.all
-    db = PG.connect( { dbname: "bounty_hunters", host: "localhost" })
-
-    sql = "SELECT * FROM bounty_hunters ORDER BY name;"
-    db.prepare("get all", sql)
-    orders = db.exec_prepared("get all")
-
-    db.close()
-
-    bounty_objects = bounty.map { |bounty_hash| Bounty.new(bounty_hash) }
-
-    bounty_objects = []
-      for order_hash in bounty
-      pizza_order_objects = PizzaOrder.new(order_hash)
-      end
-
-    return bounty_objects
-  end
+  # def Bounty.all
+  #   db = PG.connect( { dbname: "bounty_hunter", host: "localhost" })
+  #
+  #   sql = "SELECT * FROM bounty_hunters ORDER BY name;"
+  #   db.prepare("get all", sql)
+  #   orders = db.exec_prepared("get all")
+  #
+  #   db.close()
+  #
+  #   # bounty_objects = bounty.map { |bounty_hash| Bounty.new(bounty_hash) }
+  #
+  #   # bounty_objects = []
+  #   #   for order_hash in bounty
+  #   #   pizza_order_objects = PizzaOrder.new(order_hash)
+  #   #   end
+  #
+  #   # return bounty_objects
+  # end
 
 
   # def update
